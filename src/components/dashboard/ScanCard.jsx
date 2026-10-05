@@ -1,11 +1,12 @@
 import { useRef, useState } from "react";
 import { ImagePlus, Loader2, Lock, Sparkles } from "lucide-react";
 import ScanTypeSelector from "./ScanTypeSelector";
+import { useLang } from "../../i18nContext";
 
-const PLACEHOLDERS = {
-  message: "Paste suspicious message here...",
-  url: "Paste a suspicious link, e.g. https://claim-reward-now.xyz",
-  email: "Paste the email content here...",
+const PLACEHOLDER_KEYS = {
+  message: "phMessage",
+  url: "phUrl",
+  email: "phEmail",
 };
 
 export default function ScanCard({
@@ -21,17 +22,17 @@ export default function ScanCard({
 }) {
   const fileRef = useRef(null);
   const [focused, setFocused] = useState(false);
+  const { t } = useLang();
 
   return (
     <section className="ss-card p-6 sm:p-7">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="font-display text-lg font-semibold text-ink">
-            Analyze a suspicious message
+            {t("scanCardTitle")}
           </h2>
           <p className="mt-1 max-w-md text-sm text-muted">
-            Paste a message, email or SMS below and let ScamShield identify
-            potential threats.
+            {t("scanCardSubtitle")}
           </p>
         </div>
         <ScanTypeSelector value={type} onChange={onTypeChange} />
@@ -48,7 +49,7 @@ export default function ScanCard({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           rows={5}
-          placeholder={PLACEHOLDERS[type] || PLACEHOLDERS.message}
+          placeholder={t(PLACEHOLDER_KEYS[type] || PLACEHOLDER_KEYS.message)}
           className="w-full resize-none rounded-xl bg-transparent px-4 py-3 text-sm text-ink placeholder:text-muted/70 focus:outline-none"
         />
       </div>
@@ -63,12 +64,12 @@ export default function ScanCard({
           {loading ? (
             <>
               <Loader2 size={15} className="animate-spin" />
-              ANALYZING FOR SCAM INDICATORS...
+              {t("analyzingIndicators")}
             </>
           ) : (
             <>
               <Sparkles size={15} />
-              ANALYZE WITH AI
+              {t("analyzeWithAi")}
             </>
           )}
         </button>
@@ -84,7 +85,7 @@ export default function ScanCard({
           ) : (
             <ImagePlus size={15} />
           )}
-          Upload screenshot
+          {t("uploadScreenshot")}
         </button>
         <input
           ref={fileRef}
@@ -100,7 +101,7 @@ export default function ScanCard({
 
         <span className="ml-auto inline-flex items-center gap-1.5 text-xs text-muted">
           <Lock size={13} />
-          Your message is analyzed securely.
+          {t("secureAnalyzed")}
         </span>
       </div>
 

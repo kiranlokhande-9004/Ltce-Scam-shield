@@ -1,5 +1,11 @@
 import { analyzeMessageText, KIMI_MODEL } from "./kimi.js";
-import { extractUrls, verifyUrls, hasImpersonation } from "./trustedDomains.js";
+import {
+  extractUrls,
+  verifyUrls,
+  hasImpersonation,
+  findOrganization,
+  verifyOrganization,
+} from "./trustedDomains.js";
 
 // Deterministic local engine — mirrors src/services/analyzeContent.js.
 const RULES = [
@@ -192,6 +198,8 @@ export async function scanText({ content, type = "message" }) {
 
   // Deterministic domain verification (never invented by the AI).
   const urlVerification = verifyUrls(extractUrls(text));
+  const organization = findOrganization(text)?.name || "Not identified";
+  const organizationVerification = verifyOrganization(text, urlVerification);
   let brandNote = "";
   if (hasImpersonation(urlVerification)) {
     const hit = urlVerification.find((entry) => entry.impersonation);
@@ -216,6 +224,8 @@ export async function scanText({ content, type = "message" }) {
       ? `${recommendation} ${brandNote}`
       : recommendation,
     urlVerification,
+    organization,
+    organizationVerification,
     model: KIMI_MODEL,
     source: ai ? "ai" : "local",
     aiError,

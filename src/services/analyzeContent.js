@@ -191,6 +191,11 @@ function normalize(raw, type, source) {
         ? SAFE_INDICATORS
         : [],
     recommendation: raw.recommendation || RECOMMENDATION[verdict],
+    organization: raw.organization || "",
+    organizationVerification: raw.organizationVerification || null,
+    urlVerification: Array.isArray(raw.urlVerification)
+      ? raw.urlVerification
+      : [],
     source,
     model: raw.model || "",
   };

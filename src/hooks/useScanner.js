@@ -78,6 +78,14 @@ export function useScanner({ onScanComplete } = {}) {
         recommendation:
           (analysis.safeActions || []).join(" ") ||
           "Verify through the organization's official website or app.",
+        // Deterministic (server) verification data reused by URL-mismatch UI
+        // and the local voice summary. No extra AI call is made for these.
+        organization: analysis.organization,
+        requestedAction: analysis.requestedAction,
+        reasons: analysis.reasons,
+        safeActions: analysis.safeActions,
+        organizationVerification: analysis.organizationVerification,
+        urlVerification: analysis.urlVerification,
         source: "ai",
         model: "",
       };

@@ -4,8 +4,11 @@ import AnalysisResult from "../components/dashboard/AnalysisResult";
 import QuickActionCard from "../components/dashboard/QuickActionCard";
 import RecentScans from "../components/dashboard/RecentScans";
 import StatisticsChart from "../components/dashboard/StatisticsChart";
+import { useLang } from "../i18nContext";
 
 export default function DashboardPage({ scanner, scans, onNavigate, onView }) {
+  const { t } = useLang();
+
   return (
     <div className="space-y-5">
       <ScanCard
@@ -27,29 +30,29 @@ export default function DashboardPage({ scanner, scans, onNavigate, onView }) {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <QuickActionCard
           icon={MessageSquare}
-          title="Scan Message"
-          description="Analyze suspicious SMS or WhatsApp messages"
+          title={t("qaScanMessage")}
+          description={t("qaScanMessageDesc")}
           tone="primary"
           onClick={() => onNavigate("scan-message")}
         />
         <QuickActionCard
           icon={Link2}
-          title="Check URL"
-          description="Detect suspicious or phishing links"
+          title={t("qaCheckUrl")}
+          description={t("qaCheckUrlDesc")}
           tone="gold"
           onClick={() => onNavigate("scan-url")}
         />
         <QuickActionCard
           icon={Mail}
-          title="Analyze Email"
-          description="Check emails for scam indicators"
+          title={t("qaAnalyzeEmail")}
+          description={t("qaAnalyzeEmailDesc")}
           tone="safe"
           onClick={() => onNavigate("scan-message")}
         />
         <QuickActionCard
           icon={FileText}
-          title="View Reports"
-          description="Review your previous security scans"
+          title={t("qaViewReports")}
+          description={t("qaViewReportsDesc")}
           tone="soft"
           onClick={() => onNavigate("reports")}
         />

@@ -1,6 +1,5 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { translate } from "./i18n";
 import Sidebar from "./components/dashboard/Sidebar";
 import Header from "./components/dashboard/Header";
 import SecurityOverview from "./components/dashboard/SecurityOverview";
@@ -13,60 +12,59 @@ import SettingsPage from "./pages/SettingsPage";
 import CallSafetyPage from "./pages/CallSafetyPage";
 import { useScanner } from "./hooks/useScanner";
 import { loadScans, prependScan, resetScans } from "./services/scanStore";
+import { useLang } from "./i18nContext";
 
-// Per-page header copy.
-const HEADERS = {
+// Per-page header copy (translation keys, resolved with the active language).
+const HEADER_KEYS = {
   dashboard: {
-    greeting: "Good morning, Alex",
-    title: "Stay protected from scams.",
-    support:
-      "Analyze suspicious messages, links and emails with ScamShield AI.",
+    greeting: "hdrDashboardGreeting",
+    title: "hdrDashboardTitle",
+    support: "hdrDashboardSupport",
   },
   "scan-message": {
-    greeting: "Scan Message",
-    title: "Check a suspicious message.",
-    support: "Paste an SMS, WhatsApp or email message to analyze it.",
+    greeting: "hdrScanMessageGreeting",
+    title: "hdrScanMessageTitle",
+    support: "hdrScanMessageSupport",
   },
   "scan-url": {
-    greeting: "Scan URL",
-    title: "Inspect a suspicious link.",
-    support: "Paste any link and ScamShield will check it for phishing signals.",
+    greeting: "hdrScanUrlGreeting",
+    title: "hdrScanUrlTitle",
+    support: "hdrScanUrlSupport",
   },
   history: {
-    greeting: "Scan History",
-    title: "Every scan, in one place.",
-    support: "Review the messages, links and emails you have analyzed.",
+    greeting: "hdrHistoryGreeting",
+    title: "hdrHistoryTitle",
+    support: "hdrHistorySupport",
   },
   reports: {
-    greeting: "Reports",
-    title: "Your security report.",
-    support: "A summary of your scan activity and the threats you avoid.",
+    greeting: "hdrReportsGreeting",
+    title: "hdrReportsTitle",
+    support: "hdrReportsSupport",
   },
   statistics: {
-    greeting: "Statistics",
-    title: "Your security activity.",
-    support: "Track how many messages you scan and their risk breakdown.",
+    greeting: "hdrStatisticsGreeting",
+    title: "hdrStatisticsTitle",
+    support: "hdrStatisticsSupport",
   },
   settings: {
-    greeting: "Settings",
-    title: "Manage your ScamShield.",
-    support: "Profile, language and demo preferences.",
+    greeting: "hdrSettingsGreeting",
+    title: "hdrSettingsTitle",
+    support: "hdrSettingsSupport",
   },
   "call-safety": {
-    greeting: "Call Safety",
-    title: "Real-time call protection.",
-    support: "Monitor a live conversation for fraud indicators.",
+    greeting: "hdrCallSafetyGreeting",
+    title: "hdrCallSafetyTitle",
+    support: "hdrCallSafetySupport",
   },
 };
 
 export default function App() {
   const [page, setPage] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lang, setLang] = useState("en");
   const [scans, setScans] = useState(() => loadScans());
 
-  // Translator retained for the (bilingual) Call Safety screen.
-  const t = useMemo(() => (key, vars) => translate(lang, key, vars), [lang]);
+  // App-wide language + translator (shared with every screen and the voice).
+  const { lang, setLang, t } = useLang();
 
   const scanner = useScanner({
     onScanComplete: (scan) => setScans((prev) => prependScan(scan, prev)),
@@ -89,7 +87,12 @@ export default function App() {
     setScans(resetScans());
   }
 
-  const header = HEADERS[page] || HEADERS.dashboard;
+  const headerKeys = HEADER_KEYS[page] || HEADER_KEYS.dashboard;
+  const header = {
+    greeting: t(headerKeys.greeting),
+    title: t(headerKeys.title),
+    support: t(headerKeys.support),
+  };
 
   const threats = scans.filter((scan) => scan.verdict === "DANGEROUS").length;
   const safeCount = scans.filter((scan) => scan.verdict === "SAFE").length;

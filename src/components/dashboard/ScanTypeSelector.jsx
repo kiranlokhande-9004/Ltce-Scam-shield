@@ -1,12 +1,15 @@
 import { Link2, Mail, MessageSquare } from "lucide-react";
+import { useLang } from "../../i18nContext";
 
 export const SCAN_TYPES = [
-  { id: "message", label: "Message", icon: MessageSquare },
-  { id: "url", label: "URL", icon: Link2 },
-  { id: "email", label: "Email", icon: Mail },
+  { id: "message", labelKey: "scanTypeMessage", icon: MessageSquare },
+  { id: "url", labelKey: "scanTypeUrl", icon: Link2 },
+  { id: "email", labelKey: "scanTypeEmail", icon: Mail },
 ];
 
 export default function ScanTypeSelector({ value, onChange }) {
+  const { t } = useLang();
+
   return (
     <div className="inline-flex rounded-full bg-app p-1">
       {SCAN_TYPES.map((type) => {
@@ -24,7 +27,7 @@ export default function ScanTypeSelector({ value, onChange }) {
             }`}
           >
             <Icon size={14} strokeWidth={2.2} />
-            {type.label}
+            {t(type.labelKey)}
           </button>
         );
       })}

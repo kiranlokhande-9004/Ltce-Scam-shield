@@ -1,8 +1,18 @@
 import { motion } from "framer-motion";
 import { Activity, ShieldCheck, TrendingUp } from "lucide-react";
 import { TOP_THREATS } from "../../dashboardData";
+import { useLang } from "../../i18nContext";
+
+// English demo labels -> translation keys (keeps the demo data untouched).
+const THREAT_KEYS = {
+  "Bank impersonation": "threatBankImpersonation",
+  "OTP / credential theft": "threatOtpTheft",
+  "Fake links": "threatFakeLinks",
+  "Prize / refund scams": "threatPrizeScams",
+};
 
 function Donut({ value }) {
+  const { t } = useLang();
   const radius = 54;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - value / 100);
@@ -36,7 +46,7 @@ function Donut({ value }) {
         <div>
           <p className="font-display text-3xl font-bold text-white">{value}%</p>
           <p className="mt-0.5 text-[10px] font-semibold tracking-[0.16em] text-white/50">
-            PROTECTION SCORE
+            {t("protectionScore")}
           </p>
         </div>
       </div>
@@ -45,6 +55,8 @@ function Donut({ value }) {
 }
 
 export default function SecurityOverview({ threats = 24, scanned = 128, score = 94 }) {
+  const { t } = useLang();
+
   return (
     <aside className="w-full shrink-0 lg:sticky lg:top-6 lg:h-[calc(100vh-3rem)] lg:w-[300px]">
       <div className="flex h-full flex-col rounded-xl4 bg-primary p-6 text-white shadow-card">
@@ -53,14 +65,14 @@ export default function SecurityOverview({ threats = 24, scanned = 128, score = 
             <ShieldCheck size={17} className="text-gold-soft" />
           </span>
           <h2 className="font-display text-sm font-semibold tracking-wide">
-            Security Overview
+            {t("securityOverview")}
           </h2>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           <div className="rounded-2xl bg-white/5 p-4">
             <p className="text-[10px] font-semibold tracking-[0.14em] text-white/45">
-              THREATS DETECTED
+              {t("threatsDetected")}
             </p>
             <p className="mt-2 font-display text-2xl font-bold text-gold-soft">
               {threats}
@@ -68,7 +80,7 @@ export default function SecurityOverview({ threats = 24, scanned = 128, score = 
           </div>
           <div className="rounded-2xl bg-white/5 p-4">
             <p className="text-[10px] font-semibold tracking-[0.14em] text-white/45">
-              MESSAGES SCANNED
+              {t("messagesScanned")}
             </p>
             <p className="mt-2 font-display text-2xl font-bold">{scanned}</p>
           </div>
@@ -78,17 +90,17 @@ export default function SecurityOverview({ threats = 24, scanned = 128, score = 
           <Donut value={score} />
         </div>
         <p className="mt-4 text-center text-xs leading-relaxed text-white/60">
-          ScamShield is actively monitoring your recent scans.
+          {t("overviewMonitoringNote")}
         </p>
 
         <div className="my-6 h-px bg-white/10" />
 
         <div className="flex items-center justify-between text-[10px] font-semibold tracking-[0.14em] text-white/45">
           <span className="flex items-center gap-1.5">
-            <Activity size={12} className="text-gold-soft" /> LAST 24H
+            <Activity size={12} className="text-gold-soft" /> {t("last24h")}
           </span>
           <span className="flex items-center gap-1.5">
-            <TrendingUp size={12} className="text-gold-soft" /> TRENDING
+            <TrendingUp size={12} className="text-gold-soft" /> {t("trending")}
           </span>
         </div>
 
@@ -96,7 +108,9 @@ export default function SecurityOverview({ threats = 24, scanned = 128, score = 
           {TOP_THREATS.map((threat, index) => (
             <div key={threat.label}>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-white/70">{threat.label}</span>
+                <span className="text-white/70">
+                  {t(THREAT_KEYS[threat.label]) || threat.label}
+                </span>
                 <span className="text-white/45">{threat.value}%</span>
               </div>
               <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">

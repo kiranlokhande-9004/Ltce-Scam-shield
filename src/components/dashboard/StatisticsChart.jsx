@@ -8,33 +8,50 @@ import {
   YAxis,
 } from "recharts";
 import { ACTIVITY_SERIES } from "../../dashboardData";
+import { useLang } from "../../i18nContext";
 
 const LEGEND = [
-  { label: "Safe", color: "#4F9D69" },
-  { label: "Suspicious", color: "#D9A52B" },
-  { label: "Dangerous", color: "#C95757" },
+  { labelKey: "legendSafe", color: "#4F9D69" },
+  { labelKey: "legendSuspicious", color: "#D9A52B" },
+  { labelKey: "legendDangerous", color: "#C95757" },
 ];
 
+const DAY_KEYS = {
+  Mon: "dayMon",
+  Tue: "dayTue",
+  Wed: "dayWed",
+  Thu: "dayThu",
+  Fri: "dayFri",
+  Sat: "daySat",
+  Sun: "daySun",
+};
+
 export default function StatisticsChart({ data = ACTIVITY_SERIES, showScanned = true }) {
+  const { t } = useLang();
+  const localized = data.map((row) => ({
+    ...row,
+    day: DAY_KEYS[row.day] ? t(DAY_KEYS[row.day]) : row.day,
+  }));
+
   return (
     <section className="ss-card p-6 sm:p-7">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-lg font-semibold text-ink">
-            Your Security Activity
+            {t("chartTitle")}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            Messages scanned and their risk breakdown.
+            {t("chartSubtitle")}
           </p>
         </div>
         <div className="flex items-center gap-4">
           {LEGEND.map((item) => (
-            <span key={item.label} className="flex items-center gap-2 text-xs text-muted">
+            <span key={item.labelKey} className="flex items-center gap-2 text-xs text-muted">
               <span
                 className="h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: item.color }}
               />
-              {item.label}
+              {t(item.labelKey)}
             </span>
           ))}
         </div>
@@ -42,7 +59,7 @@ export default function StatisticsChart({ data = ACTIVITY_SERIES, showScanned = 
 
       <div className="mt-5 h-[260px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} barSize={22}>
+          <BarChart data={localized} barSize={22}>
             <CartesianGrid vertical={false} stroke="#E3EDEC" />
             <XAxis
               dataKey="day"

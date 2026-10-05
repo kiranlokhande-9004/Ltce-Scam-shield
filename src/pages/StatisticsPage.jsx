@@ -9,25 +9,41 @@ import {
 } from "recharts";
 import StatisticsChart from "../components/dashboard/StatisticsChart";
 import { ACTIVITY_SERIES } from "../dashboardData";
+import { useLang } from "../i18nContext";
+
+const DAY_KEYS = {
+  Mon: "dayMon",
+  Tue: "dayTue",
+  Wed: "dayWed",
+  Thu: "dayThu",
+  Fri: "dayFri",
+  Sat: "daySat",
+  Sun: "daySun",
+};
 
 export default function StatisticsPage() {
-  const totalScanned = ACTIVITY_SERIES.reduce((sum, d) => sum + d.scanned, 0);
-  const peak = ACTIVITY_SERIES.reduce((best, d) => (d.scanned > best.scanned ? d : best));
-  const avg = Math.round(totalScanned / ACTIVITY_SERIES.length);
+  const { t } = useLang();
+  const series = ACTIVITY_SERIES.map((row) => ({
+    ...row,
+    day: DAY_KEYS[row.day] ? t(DAY_KEYS[row.day]) : row.day,
+  }));
+  const totalScanned = series.reduce((sum, d) => sum + d.scanned, 0);
+  const peak = series.reduce((best, d) => (d.scanned > best.scanned ? d : best));
+  const avg = Math.round(totalScanned / series.length);
 
   return (
     <div className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="ss-card p-5">
-          <p className="ss-label">Scanned This Week</p>
+          <p className="ss-label">{t("statsScannedThisWeek")}</p>
           <p className="mt-1 font-display text-2xl font-bold text-ink">{totalScanned}</p>
         </div>
         <div className="ss-card p-5">
-          <p className="ss-label">Daily Average</p>
+          <p className="ss-label">{t("statsDailyAverage")}</p>
           <p className="mt-1 font-display text-2xl font-bold text-ink">{avg}</p>
         </div>
         <div className="ss-card p-5">
-          <p className="ss-label">Busiest Day</p>
+          <p className="ss-label">{t("statsBusiestDay")}</p>
           <p className="mt-1 font-display text-2xl font-bold text-ink">
             {peak.day} · {peak.scanned}
           </p>
@@ -38,11 +54,11 @@ export default function StatisticsPage() {
 
       <section className="ss-card p-6 sm:p-7">
         <h2 className="font-display text-lg font-semibold text-ink">
-          Scan Volume Trend
+          {t("statsScanVolumeTrend")}
         </h2>
         <div className="mt-5 h-[240px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={ACTIVITY_SERIES}>
+            <AreaChart data={series}>
               <defs>
                 <linearGradient id="scanFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#365856" stopOpacity={0.28} />

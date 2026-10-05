@@ -1,11 +1,16 @@
 import { Check, RotateCcw, ShieldCheck } from "lucide-react";
 import { LANGUAGES } from "../i18n";
+import { useLang } from "../i18nContext";
 
 export default function SettingsPage({ lang, setLang, onReset }) {
+  const { t } = useLang();
+
   return (
     <div className="space-y-5">
       <section className="ss-card p-6 sm:p-7">
-        <h2 className="font-display text-lg font-semibold text-ink">Profile</h2>
+        <h2 className="font-display text-lg font-semibold text-ink">
+          {t("settingsProfile")}
+        </h2>
         <div className="mt-4 flex items-center gap-4">
           <span className="grid h-14 w-14 place-items-center rounded-full bg-primary font-display text-lg font-bold text-gold-soft">
             AJ
@@ -19,10 +24,10 @@ export default function SettingsPage({ lang, setLang, onReset }) {
 
       <section className="ss-card p-6 sm:p-7">
         <h2 className="font-display text-lg font-semibold text-ink">
-          Interface Language
+          {t("settingsInterfaceLanguage")}
         </h2>
         <p className="mt-1 text-sm text-muted">
-          Applies to the Call Safety screen and shared guidance.
+          {t("settingsLanguageNote")}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
           {LANGUAGES.map((entry) => {
@@ -53,9 +58,11 @@ export default function SettingsPage({ lang, setLang, onReset }) {
               <ShieldCheck size={18} />
             </span>
             <div>
-              <p className="font-semibold text-ink">Protection Active</p>
+              <p className="font-semibold text-ink">
+                {t("settingsProtectionActive")}
+              </p>
               <p className="text-sm text-muted">
-                ScamShield is monitoring your scans.
+                {t("settingsMonitoring")}
               </p>
             </div>
           </div>
@@ -64,9 +71,11 @@ export default function SettingsPage({ lang, setLang, onReset }) {
       </section>
 
       <section className="ss-card p-6 sm:p-7">
-        <h2 className="font-display text-lg font-semibold text-ink">Demo Data</h2>
+        <h2 className="font-display text-lg font-semibold text-ink">
+          {t("settingsDemoData")}
+        </h2>
         <p className="mt-1 text-sm text-muted">
-          Restore the sample scan history to its original state.
+          {t("settingsDemoDataNote")}
         </p>
         <button
           type="button"
@@ -74,7 +83,7 @@ export default function SettingsPage({ lang, setLang, onReset }) {
           className="mt-4 inline-flex items-center gap-2 rounded-full border border-line bg-white px-5 py-2.5 text-sm font-semibold text-primary transition hover:border-primary/40"
         >
           <RotateCcw size={14} />
-          Reset demo data
+          {t("settingsResetDemo")}
         </button>
       </section>
     </div>

@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import RiskBadge from "./RiskBadge";
+import { useLang } from "../../i18nContext";
 
 export function scanTypeLabel(type) {
   return String(type || "").toUpperCase();
@@ -11,11 +12,13 @@ export default function RecentScans({
   onViewAll,
   showViewAll = true,
 }) {
+  const { t } = useLang();
+
   return (
     <section className="ss-card p-6 sm:p-7">
       <div className="flex items-center justify-between">
         <h2 className="font-display text-lg font-semibold text-ink">
-          Recent Scans
+          {t("recentScans")}
         </h2>
         {showViewAll && (
           <button
@@ -23,7 +26,7 @@ export default function RecentScans({
             onClick={onViewAll}
             className="inline-flex items-center gap-1.5 rounded-full border border-line px-4 py-2 text-xs font-semibold text-primary transition hover:border-primary/40"
           >
-            View All
+            {t("viewAll")}
             <ArrowRight size={13} />
           </button>
         )}
@@ -34,11 +37,13 @@ export default function RecentScans({
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="bg-app/70 text-[11px] uppercase tracking-[0.12em] text-muted">
-              <th className="px-5 py-3 font-semibold">Type</th>
-              <th className="px-5 py-3 font-semibold">Message Preview</th>
-              <th className="px-5 py-3 font-semibold">Date</th>
-              <th className="px-5 py-3 font-semibold">Risk Level</th>
-              <th className="px-5 py-3 font-semibold text-right">Action</th>
+              <th className="px-5 py-3 font-semibold">{t("colType")}</th>
+              <th className="px-5 py-3 font-semibold">{t("colPreview")}</th>
+              <th className="px-5 py-3 font-semibold">{t("colDate")}</th>
+              <th className="px-5 py-3 font-semibold">{t("colRisk")}</th>
+              <th className="px-5 py-3 font-semibold text-right">
+                {t("colAction")}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -65,7 +70,7 @@ export default function RecentScans({
                     onClick={() => onView?.(scan)}
                     className="text-xs font-semibold text-primary hover:text-gold"
                   >
-                    View
+                    {t("viewAction")}
                   </button>
                 </td>
               </tr>

@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, Settings, User } from "lucide-react";
+import { useLang } from "../../i18nContext";
 
 export default function ProfileMenu() {
   const [open, setOpen] = useState(false);
+  const { t } = useLang();
 
   return (
     <div className="relative">
@@ -35,19 +37,19 @@ export default function ProfileMenu() {
             className="absolute right-0 z-20 mt-2 w-44 overflow-hidden rounded-2xl bg-white p-1.5 shadow-card ring-1 ring-line"
           >
             {[
-              { icon: User, label: "Profile" },
-              { icon: Settings, label: "Preferences" },
-              { icon: LogOut, label: "Sign out" },
+              { icon: User, labelKey: "pmProfile" },
+              { icon: Settings, labelKey: "pmPreferences" },
+              { icon: LogOut, labelKey: "pmSignOut" },
             ].map((item) => {
               const Icon = item.icon;
               return (
                 <button
-                  key={item.label}
+                  key={item.labelKey}
                   type="button"
                   className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm text-ink transition hover:bg-app"
                 >
                   <Icon size={15} className="text-muted" />
-                  {item.label}
+                  {t(item.labelKey)}
                 </button>
               );
             })}

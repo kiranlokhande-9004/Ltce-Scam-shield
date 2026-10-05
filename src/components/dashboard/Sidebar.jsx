@@ -11,19 +11,22 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Logo from "./Logo";
+import { useLang } from "../../i18nContext";
 
 export const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "scan-message", label: "Scan Message", icon: ShieldAlert },
-  { id: "scan-url", label: "Scan URL", icon: Link2 },
-  { id: "history", label: "Scan History", icon: History },
-  { id: "reports", label: "Reports", icon: FileText },
-  { id: "statistics", label: "Statistics", icon: BarChart3 },
-  { id: "call-safety", label: "Call Safety", icon: PhoneCall },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "dashboard", labelKey: "navDashboard", icon: LayoutDashboard },
+  { id: "scan-message", labelKey: "navScanMessage", icon: ShieldAlert },
+  { id: "scan-url", labelKey: "navScanUrl", icon: Link2 },
+  { id: "history", labelKey: "navHistory", icon: History },
+  { id: "reports", labelKey: "navReports", icon: FileText },
+  { id: "statistics", labelKey: "navStatistics", icon: BarChart3 },
+  { id: "call-safety", labelKey: "navCallSafety", icon: PhoneCall },
+  { id: "settings", labelKey: "navSettings", icon: Settings },
 ];
 
 function SidebarContent({ page, onNavigate }) {
+  const { t } = useLang();
+
   return (
     <div className="flex h-full flex-col">
       <div className="px-2 pb-6">
@@ -56,7 +59,7 @@ function SidebarContent({ page, onNavigate }) {
               } text-left`}
             >
               <Icon size={17} strokeWidth={2} />
-              <span className="font-medium">{item.label}</span>
+              <span className="font-medium">{t(item.labelKey)}</span>
             </button>
           );
         })}
@@ -64,7 +67,7 @@ function SidebarContent({ page, onNavigate }) {
 
       <div className="mt-6 rounded-2xl bg-white/5 p-4">
         <p className="text-[10px] font-semibold tracking-[0.18em] text-white/40">
-          SECURITY STATUS
+          {t("securityStatus")}
         </p>
         <div className="mt-2 flex items-center gap-2">
           <span className="relative flex h-2 w-2">
@@ -72,7 +75,7 @@ function SidebarContent({ page, onNavigate }) {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-safe" />
           </span>
           <span className="text-sm font-semibold text-white">
-            Protection Active
+            {t("protectionActive")}
           </span>
         </div>
       </div>
@@ -81,6 +84,8 @@ function SidebarContent({ page, onNavigate }) {
 }
 
 export default function Sidebar({ page, onNavigate, open, onClose }) {
+  const { t } = useLang();
+
   function navigate(id) {
     onNavigate(id);
     onClose?.();
@@ -111,7 +116,7 @@ export default function Sidebar({ page, onNavigate, open, onClose }) {
               type="button"
               onClick={onClose}
               className="absolute right-4 top-5 text-white/60 hover:text-white"
-              aria-label="Close menu"
+              aria-label={t("headerCloseMenu")}
             >
               <X size={18} />
             </button>

@@ -16,5 +16,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
+    // recharts is intentionally eager (the dashboard chart is above the fold).
+    chunkSizeWarningLimit: 650,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom'],
+          charts: ['recharts'],
+          motion: ['framer-motion'],
+          icons: ['lucide-react'],
+        },
+      },
+    },
   },
 });

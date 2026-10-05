@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScamShield</string>
+    <string name="channel_name">Call Safety Monitoring</string>
+    <string name="channel_desc">Shows when ScamShield is monitoring an active call for fraud.</string>
+    <string name="monitoring_title">ScamShield · Call Safety Monitoring</string>
+    <string name="monitoring_text">Monitoring this call for fraud indicators…</string>
+    <string name="warning_title">ScamShield Warning</string>
+</resources>

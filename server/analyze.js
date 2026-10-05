@@ -3,6 +3,7 @@ import {
   extractUrls,
   verifyUrls,
   hasImpersonation,
+  verifyOrganization,
 } from "./trustedDomains.js";
 
 // Coerce a value that might be a string, an array, a free-text blob or null
@@ -40,6 +41,30 @@ function normalizeRisk(value) {
   if (raw.includes("SAFE")) return "SAFE";
   if (raw.includes("LOW")) return "LOW";
   return "MEDIUM";
+}
+
+// Deterministic fallback chain used when the AI does not provide one.
+function fallbackAttackChain() {
+  return [
+    "Impersonate a trusted organization",
+    "Create fear or urgency",
+    "Ask for sensitive information",
+    "Attempt account takeover or financial fraud",
+  ];
+}
+
+// Deterministic fallback safe actions used when the AI returns none.
+function fallbackSafeActions() {
+  return [
+    "Do not click suspicious links",
+    "Do not share OTP",
+    "Do not share PIN",
+    "Do not share CVV",
+    "Do not share passwords",
+    "Verify through the organization's official website",
+    "Contact the organization using an official number",
+    "Report financial cyber fraud through 1930 if money was lost",
+  ];
 }
 
 // Pull every candidate URL out of the model's response, wherever it hid them.
@@ -87,9 +112,9 @@ export async function analyzeScreenshot(
   const suspiciousPhrases = toArray(
     raw.suspiciousEvidence ?? raw.suspiciousPhrases
   );
-  const reasons = toArray(raw.whySuspicious ?? raw.reasons);
-  const attackChain = toArray(raw.attackChain);
-  const safeActions = toArray(raw.safeActions);
+  const aiReasons = toArray(raw.whySuspicious ?? raw.reasons);
+  let attackChain = toArray(raw.attackChain);
+  let safeActions = toArray(raw.safeActions);
 
   const urlCandidates = collectUrlCandidates(raw, [
     raw.organization,
@@ -97,25 +122,48 @@ export async function analyzeScreenshot(
     raw.requestedAction,
     raw.urgency,
     ...suspiciousPhrases,
-    ...reasons,
+    ...aiReasons,
     ...safeActions,
   ]);
 
   const urlVerification = verifyUrls(urlCandidates);
 
+  const organization = raw.organization || "Not identified";
+
+  // Deterministic official-website verification for the claimed organization.
+  const organizationVerification = verifyOrganization(
+    organization,
+    urlVerification
+  );
+
   let riskLevel = normalizeRisk(raw.risk ?? raw.riskLevel);
 
   // Deterministic escalation: a confirmed brand impersonation is always HIGH.
   if (hasImpersonation(urlVerification) && riskLevel !== "HIGH") {
-    console.log(
-      "Escalating risk to HIGH: detected brand impersonation."
-    );
+    console.log("Escalating risk to HIGH: detected brand impersonation.");
     riskLevel = "HIGH";
+  }
+
+  // Deterministic fallbacks so the UI is never empty (esp. for high risk).
+  if (!attackChain.length && (riskLevel === "HIGH" || riskLevel === "MEDIUM")) {
+    attackChain = fallbackAttackChain();
+  }
+
+  if (!safeActions.length) {
+    safeActions = fallbackSafeActions();
+  }
+
+  // Reasons: keep the AI's reasoning, but add a deterministic reason when an
+  // official-domain mismatch was found.
+  const reasons = [...aiReasons];
+  if (organizationVerification?.status === "SUSPICIOUS") {
+    const note = `The message URL does not match the official ${organizationVerification.name} domain (${organizationVerification.officialWebsite}).`;
+    if (!reasons.includes(note)) reasons.push(note);
   }
 
   return {
     riskLevel,
-    organization: raw.organization || "Not identified",
+    organization,
     claim: raw.claim || "Not identified",
     requestedAction: raw.requestedAction || "Not identified",
     urgency: raw.urgency || "Not applicable",
@@ -123,6 +171,7 @@ export async function analyzeScreenshot(
     reasons,
     attackChain,
     urlVerification,
+    organizationVerification,
     safeActions,
   };
 }

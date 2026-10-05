@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    @apply bg-app text-ink font-sans antialiased;
+  }
+
+  ::selection {
+    background: #d8a92844;
+  }
+}
+
+@layer components {
+  .ss-card {
+    @apply bg-white rounded-xl3 shadow-card border border-line/70;
+  }
+
+  .ss-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em] text-muted;
+  }
+
+  .ss-nav-item {
+    @apply flex items-center gap-3 rounded-2xl px-4 py-3 text-sm text-white/70
+      transition-all duration-200 hover:bg-white/10 hover:text-white;
+  }
+
+  .ss-nav-item-active {
+    @apply bg-white text-primary shadow-soft hover:bg-white hover:text-primary;
+  }
+
+  .ss-chip {
+    @apply rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200;
+  }
+}
+
+/* Slim, unobtrusive scrollbars for the dashboard. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c7d6d4 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #c7d6d4;
+  border-radius: 999px;
+}

@@ -29,15 +29,17 @@ body {
   min-height: 100%;
 }
 
-body {
-  margin: 0;
+/* The legacy dark theme is scoped to the Call Safety screen only, so the new
+   light dashboard owns the page background. */
+.legacy-dark {
   font-family: "Segoe UI", Inter, system-ui, -apple-system, Arial, sans-serif;
   color: var(--text);
   background:
     radial-gradient(1100px 620px at 12% -8%, rgba(91, 140, 255, 0.22), transparent 60%),
     radial-gradient(900px 560px at 92% 4%, rgba(139, 92, 255, 0.2), transparent 58%),
     linear-gradient(180deg, var(--bg), var(--bg-soft));
-  background-attachment: fixed;
+  border-radius: 24px;
+  padding: 20px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -429,5 +431,951 @@ button:disabled {
 
   .actions {
     flex-direction: column;
+  }
+}
+
+/* ==========================================================================
+   ScamShield — feature additions (language, modes, verification, call sim)
+   ========================================================================== */
+
+/* ---------- Hero top row + language picker ---------- */
+
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.hero-top .hero-badge {
+  margin: 0;
+}
+
+.lang-picker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(5, 8, 15, 0.45);
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.lang-picker select {
+  background: transparent;
+  color: var(--text);
+  border: 0;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.lang-picker select option {
+  background: var(--card-solid);
+  color: var(--text);
+}
+
+/* ---------- Mode tabs ---------- */
+
+.mode-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: rgba(5, 8, 15, 0.45);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 6px;
+}
+
+.mode-tab {
+  flex: 1;
+  background: transparent;
+  color: var(--muted);
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.mode-tab.active {
+  color: #fff;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 24px -12px rgba(91, 140, 255, 0.9);
+}
+
+/* ---------- Risk card extras ---------- */
+
+.risk-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.voice-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-voice {
+  width: auto;
+  padding: 12px 16px;
+  font-size: 15px;
+  color: var(--text);
+  background: rgba(5, 8, 15, 0.5);
+  border: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+
+.btn-voice:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.btn-voice-active {
+  border-color: var(--bad);
+  color: #ffd4dc;
+}
+
+.voice-note {
+  margin: -6px 0 18px;
+}
+
+/* ---------- Badges ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.badge-safe {
+  color: #bff3d4;
+  background: rgba(53, 200, 120, 0.2);
+  border: 1px solid rgba(53, 200, 120, 0.55);
+}
+
+.badge-bad {
+  color: #ffd4dc;
+  background: rgba(255, 84, 112, 0.18);
+  border: 1px solid rgba(255, 84, 112, 0.55);
+}
+
+.badge-warn {
+  color: #ffe6bd;
+  background: rgba(255, 176, 32, 0.18);
+  border: 1px solid rgba(255, 176, 32, 0.55);
+}
+
+/* ---------- Official website block ---------- */
+
+.org-name {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.official-block {
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+/* ---------- Link-style buttons ---------- */
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  color: #fff;
+  background: linear-gradient(120deg, var(--accent), var(--accent-2));
+  box-shadow: 0 12px 26px -12px rgba(91, 140, 255, 0.9);
+  transition: transform 0.12s ease;
+}
+
+.btn-link:hover {
+  transform: translateY(-1px);
+}
+
+/* ---------- URL verification ---------- */
+
+.url-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.url-title {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.url-value {
+  margin: 8px 0 4px !important;
+  color: var(--text) !important;
+  font-weight: 600;
+  font-size: 15px !important;
+}
+
+.url-warn {
+  border-left-color: var(--warn);
+}
+
+.url .info-row {
+  padding: 8px 0;
+}
+
+/* ---------- Safe actions with check marks ---------- */
+
+.safe-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.safe-list li {
+  position: relative;
+  padding-left: 28px;
+}
+
+.safe-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--good);
+  font-weight: 700;
+}
+
+/* ---------- Cybercrime help ---------- */
+
+.help-card {
+  border-left: 5px solid var(--border-strong);
+}
+
+.help-high {
+  border-left-color: var(--bad);
+  background: linear-gradient(90deg, rgba(255, 84, 112, 0.14), var(--card));
+}
+
+.help-card h2 {
+  margin-bottom: 14px;
+}
+
+.help-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.help-label {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.help-phone {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.help-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.help-report {
+  margin-top: 0;
+}
+
+/* ==========================================================================
+   Simulated scam-call mode
+   ========================================================================== */
+
+.sim-note {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.call-mode {
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.call-card {
+  text-align: center;
+}
+
+.call-icon {
+  font-size: 52px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.call-icon.small {
+  font-size: 30px;
+  margin: 0;
+}
+
+.call-icon.pulse {
+  animation: ring 1.1s ease-in-out infinite;
+}
+
+@keyframes ring {
+  0%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  20% {
+    transform: rotate(-14deg) scale(1.06);
+  }
+  60% {
+    transform: rotate(14deg) scale(1.06);
+  }
+}
+
+.call-status {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.call-number {
+  margin: 4px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.call-card .btn-primary {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.call-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.call-actions button {
+  flex: 1;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.btn-decline {
+  color: #fff;
+  background: linear-gradient(120deg, #ff5470, #d62f4c);
+}
+
+.btn-answer {
+  color: #05210f;
+  background: linear-gradient(120deg, #35c878, #22a35c);
+}
+
+.call-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.call-org {
+  margin: 2px 0 0;
+  font-size: 15px;
+}
+
+.transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px 2px;
+  text-align: left;
+}
+
+.bubble {
+  max-width: 88%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.45;
+}
+
+.bubble-caller {
+  align-self: flex-start;
+  background: rgba(255, 84, 112, 0.12);
+  border: 1px solid rgba(255, 84, 112, 0.35);
+}
+
+.bubble-user {
+  align-self: flex-end;
+  background: rgba(91, 140, 255, 0.16);
+  border: 1px solid rgba(91, 140, 255, 0.4);
+}
+
+.bubble-speaker {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.bubble-text {
+  font-size: 15px;
+}
+
+.indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.scam-detected {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 14px;
+  background: rgba(255, 84, 112, 0.14);
+  border: 1px solid rgba(255, 84, 112, 0.5);
+}
+
+.scam-detected h2 {
+  margin: 0;
+}
+
+.do-not-share {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.do-not-share h3 {
+  color: var(--bad);
+}
+
+.chain-card {
+  text-align: left;
+  margin-top: 18px;
+  background: rgba(5, 8, 15, 0.4);
+}
+
+/* ---------- Small-screen tuning for new features ---------- */
+
+@media (max-width: 560px) {
+  .hero-top {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mode-tab {
+    font-size: 14px;
+    padding: 12px 8px;
+  }
+
+  .risk-card {
+    flex-wrap: wrap;
+  }
+
+  .voice-actions {
+    width: 100%;
+  }
+
+  .btn-voice {
+    width: 100%;
+  }
+
+  .help-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .transcript {
+    max-height: 260px;
+  }
+
+  .bubble {
+    max-width: 94%;
+  }
+}
+
+/* ==========================================================================
+   Call Safety (real-time monitoring) dashboard
+   ========================================================================== */
+
+.call-safety {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.cs-controls-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid var(--border-strong);
+}
+
+.pill-live {
+  color: #ffd4dc;
+  background: rgba(255, 84, 112, 0.18);
+  border-color: rgba(255, 84, 112, 0.6);
+  animation: pill-pulse 1.6s ease-in-out infinite;
+}
+
+.pill-idle {
+  color: var(--muted);
+  background: rgba(5, 8, 15, 0.45);
+}
+
+@keyframes pill-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.cs-model {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cs-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cs-mode-option {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(5, 8, 15, 0.35);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.cs-mode-option.active {
+  border-color: var(--accent);
+  background: rgba(91, 140, 255, 0.1);
+}
+
+.cs-mode-option input {
+  width: auto;
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.cs-mode-option span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cs-mode-option em {
+  font-style: normal;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.cs-privacy {
+  margin-top: 14px;
+  text-align: center;
+}
+
+/* Demo script */
+
+.script-lines {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.script-lines li {
+  margin: 10px 0;
+  line-height: 1.5;
+}
+
+/* Warning overlay */
+
+.call-warning {
+  border: 2px solid var(--bad);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 20px;
+  background: linear-gradient(180deg, rgba(255, 84, 112, 0.2), rgba(255, 84, 112, 0.06));
+  box-shadow: 0 18px 50px -18px rgba(255, 84, 112, 0.7);
+  animation: warn-in 0.3s ease;
+}
+
+.call-warning.critical {
+  border-color: #ff2d55;
+}
+
+@keyframes warn-in {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.call-warning-head {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #ffd4dc;
+  margin-bottom: 8px;
+}
+
+.call-warning-title {
+  margin: 0 0 8px;
+  font-size: 26px;
+  color: #fff;
+}
+
+.call-warning-risk {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.call-warning-reason {
+  margin: 0 0 14px;
+  color: #ffd9e0;
+}
+
+.call-warning-block {
+  margin-bottom: 16px;
+}
+
+.call-warning-block-title {
+  display: block;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.call-warning-pay {
+  margin: 12px 0 0;
+  font-weight: 700;
+  color: #ffd4dc;
+}
+
+.call-warning-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.call-warning-actions button {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Chip rows */
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #eef2fb;
+  background: rgba(5, 8, 15, 0.6);
+  border: 1px solid var(--border-strong);
+}
+
+.chip-bad {
+  color: #ffd4dc;
+  background: rgba(255, 84, 112, 0.16);
+  border-color: rgba(255, 84, 112, 0.5);
+}
+
+/* Stat grid */
+
+.cs-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.cs-grid .cs-stat {
+  margin-bottom: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cs-stat-label {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cs-stat-value {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.cs-stat-value.live {
+  color: var(--bad);
+}
+
+.cs-stat-value.risk-high {
+  color: var(--warn);
+  border: 0;
+  background: none;
+}
+
+.cs-stat-value.risk-critical {
+  color: var(--bad);
+  border: 0;
+  background: none;
+}
+
+.cs-stat-value.risk-medium {
+  color: var(--warn);
+  border: 0;
+  background: none;
+}
+
+.cs-stat-value.risk-low {
+  color: #4dc3ff;
+  border: 0;
+  background: none;
+}
+
+/* Stage banner */
+
+.stage-banner {
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-strong);
+  background: rgba(5, 8, 15, 0.4);
+}
+
+.stage-critical {
+  color: #fff;
+  border-color: var(--bad);
+  background: rgba(255, 84, 112, 0.22);
+}
+
+.stage-high {
+  color: #ffe6bd;
+  border-color: var(--warn);
+  background: rgba(255, 176, 32, 0.18);
+}
+
+/* Live transcript */
+
+.transcript.live {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.bubble.interim {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Payment friction modal */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 6, 14, 0.78);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  max-width: 480px;
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--bad);
+}
+
+.modal-warning {
+  font-size: 17px;
+  margin: 0 0 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.modal-actions button {
+  flex: 1;
+  min-width: 140px;
+}
+
+/* Timeline */
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.timeline-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 18px 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 8px 0;
+  line-height: 1.45;
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: 60px;
+  top: 30px;
+  bottom: -6px;
+  width: 2px;
+  background: var(--border-strong);
+}
+
+.timeline-item:last-child::before {
+  display: none;
+}
+
+.timeline-time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+}
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 4px;
+}
+
+.tone-bad .timeline-dot {
+  background: var(--bad);
+}
+
+.tone-ok .timeline-dot {
+  background: var(--good);
+}
+
+.tone-warn .timeline-dot {
+  background: var(--warn);
+}
+
+.tone-speech .timeline-dot {
+  background: var(--accent-2);
+}
+
+.timeline-text {
+  overflow-wrap: anywhere;
+}
+
+/* Metrics */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.metrics-grid span {
+  color: var(--muted);
+}
+
+.metrics-grid strong {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .cs-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .call-warning-title {
+    font-size: 22px;
+  }
+
+  .timeline-item {
+    grid-template-columns: 46px 16px 1fr;
+  }
+
+  .timeline-item::before {
+    left: 53px;
   }
 }

@@ -1,0 +1,1 @@
+# Keep default rules. ScamShield demo uses no reflection-heavy libraries.
